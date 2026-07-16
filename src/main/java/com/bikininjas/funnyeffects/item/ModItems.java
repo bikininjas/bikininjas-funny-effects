@@ -6,6 +6,7 @@ import com.bikininjas.funnyeffects.FunnyEffectsMod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -15,8 +16,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -51,11 +55,13 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Random;
 import java.util.function.Supplier;
 
 /**
@@ -118,6 +124,34 @@ public final class ModItems {
     /** Netherite chestplate: reflects 50% of incoming damage back to the attacker. */
     public static final DeferredItem<Item> THORNS_SHIELD = MOD_ITEMS.registerItem("thorns_shield",
             props -> new ArmorItem(FunnyArmorMaterials.THORNS, ArmorItem.Type.CHESTPLATE, props.stacksTo(1)));
+
+    /** Netherite sword: launches the hit entity high into the air. */
+    public static final DeferredItem<SwordItem> YEETER_HAMMER = MOD_ITEMS.registerItem("yeeter_hammer",
+            props -> new SwordItem(Tiers.NETHERITE,
+                    props.attributes(SwordItem.createAttributes(Tiers.NETHERITE, 7.0F, 3.0F))
+                            .fireResistant().stacksTo(1)));
+
+    /** Netherite sword: strikes the hit entity with lightning. */
+    public static final DeferredItem<SwordItem> THUNDER_SWORD = MOD_ITEMS.registerItem("thunder_sword",
+            props -> new SwordItem(Tiers.NETHERITE,
+                    props.attributes(SwordItem.createAttributes(Tiers.NETHERITE, 6.0F, 2.5F))
+                            .fireResistant().stacksTo(1)));
+
+    /** Wand: right-click an entity to make it bawk and hop like a chicken. */
+    public static final DeferredItem<Item> CHICKEN_WAND = MOD_ITEMS.registerItem("chicken_wand",
+            props -> new Item(props.stacksTo(1)));
+
+    /** Potato-tier boots: leave a rainbow particle trail while moving. */
+    public static final DeferredItem<ArmorItem> RAINBOW_BOOTS = MOD_ITEMS.registerItem("rainbow_boots",
+            props -> new ArmorItem(FunnyArmorMaterials.POTATO, ArmorItem.Type.BOOTS, props.stacksTo(1)));
+
+    /** Plain item: pulls nearby XP orbs toward the holder. */
+    public static final DeferredItem<Item> XP_MAGNET = MOD_ITEMS.registerItem("xp_magnet",
+            props -> new Item(props.stacksTo(1)));
+
+    /** Plain item: right-click to warp 20 blocks in the look direction. */
+    public static final DeferredItem<Item> VOID_PEARL = MOD_ITEMS.registerItem("void_pearl",
+            props -> new Item(props.stacksTo(16)));
 
     private ModItems() {
     }
@@ -294,8 +328,153 @@ public final class ModItems {
             }
         }
 
-        private static boolean isHolding(@NotNull Player player, @NotNull Item item) {
-            return player.getMainHandItem().is(item) || player.getOffhandItem().is(item);
+        /**
+         * Yeeter hammer: launch the hit entity high into the air.
+         */
+        @SubscribeEvent
+        static void onLivingDamageYeeter(@NotNull LivingDamageEvent.Post event) {
+            LivingEntity target = event.getEntity();
+            if (target.level().isClientSide()) {
+                return;
+            }
+            Entity direct = event.getSource().getDirectEntity();
+            if (!(direct instanceof LivingEntity attacker)) {
+                return;
+            }
+            if (!isHolding(attacker, YEETER_HAMMER.get())) {
+                return;
+            }
+            target.setDeltaMovement(target.getDeltaMovement().add(0.0D, 1.5D, 0.0D));
+            target.hurtMarked = true;
+            LOGGER.info("Yeeeeet! Launched {}", target.getName().getString());
+        }
+
+        /**
+         * Thunder sword: strike the hit entity with lightning.
+         */
+        @SubscribeEvent
+        static void onLivingDamageThunder(@NotNull LivingDamageEvent.Post event) {
+            LivingEntity target = event.getEntity();
+            if (target.level().isClientSide()) {
+                return;
+            }
+            Entity direct = event.getSource().getDirectEntity();
+            if (!(direct instanceof LivingEntity attacker)) {
+                return;
+            }
+            if (!isHolding(attacker, THUNDER_SWORD.get())) {
+                return;
+            }
+            ServerLevel serverLevel = (ServerLevel) target.level();
+            EntityType.LIGHTNING_BOLT.spawn(serverLevel, target.blockPosition(), MobSpawnType.TRIGGERED);
+            LOGGER.info("Thunder struck {}", target.getName().getString());
+        }
+
+        /**
+         * Chicken wand: right-click an entity to make it bawk and hop like a chicken.
+         */
+        @SubscribeEvent
+        static void onEntityInteractChicken(@NotNull PlayerInteractEvent.EntityInteract event) {
+            Player player = event.getEntity();
+            ItemStack stack = event.getItemStack();
+            if (!stack.is(CHICKEN_WAND.get())) {
+                return;
+            }
+            Level level = player.level();
+            if (level.isClientSide()) {
+                return;
+            }
+            Entity target = event.getTarget();
+            if (!(target instanceof LivingEntity living) || target instanceof Player) {
+                return;
+            }
+            living.setDeltaMovement(living.getDeltaMovement().add(0.0D, 1.0D, 0.0D));
+            living.hurtMarked = true;
+            level.playSound(null, living.blockPosition(), SoundEvents.CHICKEN_AMBIENT,
+                    SoundSource.PLAYERS, 1.0F, 1.0F);
+            LOGGER.info("Bawk! {} is now a chicken", living.getName().getString());
+        }
+
+        /**
+         * Rainbow boots: leave a rainbow particle trail while moving.
+         */
+        @SubscribeEvent
+        static void onPlayerTickRainbow(@NotNull PlayerTickEvent.Post event) {
+            Player player = event.getEntity();
+            if (player.level().isClientSide()) {
+                return;
+            }
+            ItemStack feet = player.getItemBySlot(EquipmentSlot.FEET);
+            if (!feet.is(RAINBOW_BOOTS.get())) {
+                return;
+            }
+            Vec3 movement = player.getDeltaMovement();
+            if (movement.length() <= 0.1D) {
+                return;
+            }
+            if (player.tickCount % 3 != 0) {
+                return;
+            }
+            Random random = new Random();
+            int randomRGB = random.nextInt(0xFFFFFF);
+            float r = ((randomRGB >> 16) & 0xFF) / 255.0F;
+            float g = ((randomRGB >> 8) & 0xFF) / 255.0F;
+            float b = (randomRGB & 0xFF) / 255.0F;
+            Vec3 pos = player.position();
+            player.level().addParticle(new DustParticleOptions(new Vector3f(r, g, b), 1.0F),
+                    pos.x, pos.y + 0.1D, pos.z, 0.0D, 0.0D, 0.0D);
+            LOGGER.debug("Rainbow trail at {}", player.position());
+        }
+
+        /**
+         * XP magnet: pull nearby XP orbs toward the holder.
+         */
+        @SubscribeEvent
+        static void onPlayerTickXpMagnet(@NotNull PlayerTickEvent.Post event) {
+            Player player = event.getEntity();
+            if (player.level().isClientSide()) {
+                return;
+            }
+            if (player.getInventory().items.stream().noneMatch(stack -> stack.is(XP_MAGNET.get()))
+                    && player.getInventory().armor.stream().noneMatch(stack -> stack.is(XP_MAGNET.get()))
+                    && player.getInventory().offhand.stream().noneMatch(stack -> stack.is(XP_MAGNET.get()))) {
+                return;
+            }
+            if (player.tickCount % 5 != 0) {
+                return;
+            }
+            AABB area = new AABB(player.blockPosition()).inflate(8.0D);
+            for (ExperienceOrb orb : player.level().getEntitiesOfClass(ExperienceOrb.class, area)) {
+                Vec3 toPlayer = player.position().subtract(orb.position()).normalize();
+                orb.setDeltaMovement(toPlayer.scale(0.3D));
+            }
+        }
+
+        /**
+         * Void pearl: right-click to warp 20 blocks in the look direction.
+         */
+        @SubscribeEvent
+        static void onRightClickVoidPearl(@NotNull PlayerInteractEvent.RightClickItem event) {
+            Player player = event.getEntity();
+            ItemStack stack = event.getItemStack();
+            if (!stack.is(VOID_PEARL.get())) {
+                return;
+            }
+            Level level = player.level();
+            if (level.isClientSide()) {
+                return;
+            }
+            Vec3 look = player.getLookAngle();
+            player.teleportTo(player.getX() + look.x * 20.0D,
+                    player.getY() + look.y * 20.0D,
+                    player.getZ() + look.z * 20.0D);
+            level.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT,
+                    SoundSource.PLAYERS, 1.0F, 1.0F);
+            LOGGER.info("Void warp! {}", player.getName().getString());
+        }
+
+        private static boolean isHolding(@NotNull LivingEntity entity, @NotNull Item item) {
+            return entity.getMainHandItem().is(item) || entity.getOffhandItem().is(item);
         }
     }
 

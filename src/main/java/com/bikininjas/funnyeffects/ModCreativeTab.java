@@ -37,6 +37,12 @@ public final class ModCreativeTab {
                     output.accept(ModItems.SMELTER_PICK.get());
                     output.accept(ModItems.POTATO_GOGGLES.get());
                     output.accept(ModItems.THORNS_SHIELD.get());
+                    output.accept(ModItems.YEETER_HAMMER.get());
+                    output.accept(ModItems.THUNDER_SWORD.get());
+                    output.accept(ModItems.CHICKEN_WAND.get());
+                    output.accept(ModItems.RAINBOW_BOOTS.get());
+                    output.accept(ModItems.XP_MAGNET.get());
+                    output.accept(ModItems.VOID_PEARL.get());
                 });
         return builder.build();
     }
