@@ -2,8 +2,8 @@ package com.bikininjas.funnyeffects;
 
 import com.bikininjas.corelib.log.LogManager;
 import com.bikininjas.corelib.log.ModLogger;
+import com.bikininjas.funnyeffects.item.ItemEvents;
 import com.bikininjas.funnyeffects.item.ModItems;
-import com.bikininjas.funnyeffects.item.ModItems.ItemEvents;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;

@@ -43,6 +43,14 @@ public final class ModCreativeTab {
                     output.accept(ModItems.RAINBOW_BOOTS.get());
                     output.accept(ModItems.XP_MAGNET.get());
                     output.accept(ModItems.VOID_PEARL.get());
+                    output.accept(ModItems.DISCO_SWORD.get());
+                    output.accept(ModItems.GRAVITY_PICKAXE.get());
+                    output.accept(ModItems.BOUNCY_BOOTS.get());
+                    output.accept(ModItems.SNEAKY_HELMET.get());
+                    output.accept(ModItems.SLAPFISH.get());
+                    output.accept(ModItems.REPLANTER_HOE.get());
+                    output.accept(ModItems.DINNERBONE_BAT.get());
+                    output.accept(ModItems.PARTY_POPPER.get());
                 });
         return builder.build();
     }
