@@ -12,6 +12,10 @@ plugins {
 
 rootProject.name = 'funny-effects'
 
+// Note: settings.gradle ne peut pas utiliser le version catalog (libs.versions.toml).
+// Les versions de plugins (moddev, foojay-resolver) sont centralisées dans gradle/libs.versions.toml.
+// Le composite build ci-dessous reste inchangé pour résoudre core-lib en local.
+
 // Composite build: utilise core-lib locale si le dossier sibling existe
 if (file('../core-lib').exists()) {
     includeBuild('../core-lib') {

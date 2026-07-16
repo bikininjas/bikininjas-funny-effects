@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Pre-commit hook — compile + test avant chaque commit
+# Pour un build complet: FULL_CHECK=1 git commit ...
+
+set -euo pipefail
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+# Charger JAVA_HOME depuis .env si présent
+if [ -f .env ]; then
+  set -a && source .env && set +a
+fi
+
+echo "🔨 Pre-commit: compileJava + test..."
+./gradlew compileJava test
+
+echo "✅ Pre-commit OK"
