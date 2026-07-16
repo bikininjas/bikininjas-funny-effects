@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "funnyeffects:item/squeaky_toy"
+    "layer0": "minecraft:item/note_block"
   }
 }

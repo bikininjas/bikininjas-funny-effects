@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "funnyeffects:item/lifesteal_blade"
+    "layer0": "minecraft:item/diamond_sword"
   }
 }

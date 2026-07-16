@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "funnyeffects:item/smelter_pick"
+    "layer0": "minecraft:item/diamond_pickaxe"
   }
 }
