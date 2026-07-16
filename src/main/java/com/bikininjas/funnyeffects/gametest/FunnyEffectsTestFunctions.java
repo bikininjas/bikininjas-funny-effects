@@ -3,8 +3,6 @@ package com.bikininjas.funnyeffects.gametest;
 import com.bikininjas.funnyeffects.FunnyEffectsMod;
 import com.bikininjas.funnyeffects.item.ModItems;
 import net.minecraft.core.BlockPos;
-import net.minecraft.gametest.framework.GameTest;
-import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -21,24 +19,27 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.testframework.annotation.ForEachTest;
+import net.neoforged.testframework.gametest.EmptyTemplate;
+import net.neoforged.testframework.gametest.ExtendedGameTestHelper;
 
 import org.jetbrains.annotations.NotNull;
 
 /**
- * GameTest functions for the Funny Effects mod.
+ * GameTest functions for the Funny Effects mod, migrated to the NeoForge Test Framework.
  * <p>
- * Registered automatically via {@link GameTestHolder @GameTestHolder}. Each test runs inside a
- * 3×3×3 structure with an iron block floor ({@code funnyeffects:empty3x3x3}).
+ * Uses {@link ForEachTest @ForEachTest} for auto-registration,
+ * {@link EmptyTemplate @EmptyTemplate} instead of .snbt structure files,
+ * and {@link ExtendedGameTestHelper} for enhanced test API.
  */
-@GameTestHolder(FunnyEffectsMod.MOD_ID)
+@ForEachTest(groups = FunnyEffectsMod.MOD_ID)
 public final class FunnyEffectsTestFunctions {
 
     private FunnyEffectsTestFunctions() {
     }
 
-    @GameTest(template = "funnyeffects:empty3x3x3")
-    public static void slapfish_knocksBack(@NotNull GameTestHelper helper) {
+    @EmptyTemplate(value = "3x3x3", floor = true)
+    public static void slapfish_knocksBack(@NotNull ExtendedGameTestHelper helper) {
         var player = makePlayer(helper);
         var zombie = helper.spawn(EntityType.ZOMBIE, new BlockPos(1, 2, 1));
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.SLAPFISH.get()));
@@ -51,8 +52,8 @@ public final class FunnyEffectsTestFunctions {
         helper.succeed();
     }
 
-    @GameTest(template = "funnyeffects:empty3x3x3")
-    public static void discoSword_particlesOnHit(@NotNull GameTestHelper helper) {
+    @EmptyTemplate(value = "3x3x3", floor = true)
+    public static void discoSword_particlesOnHit(@NotNull ExtendedGameTestHelper helper) {
         var player = makePlayer(helper);
         var zombie = helper.spawn(EntityType.ZOMBIE, new BlockPos(1, 2, 1));
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.DISCO_SWORD.get()));
@@ -63,8 +64,8 @@ public final class FunnyEffectsTestFunctions {
         helper.succeed();
     }
 
-    @GameTest(template = "funnyeffects:empty3x3x3")
-    public static void replanterHoe_harvestsWheat(@NotNull GameTestHelper helper) {
+    @EmptyTemplate(value = "3x3x3", floor = true)
+    public static void replanterHoe_harvestsWheat(@NotNull ExtendedGameTestHelper helper) {
         var player = makePlayer(helper);
         var pos = new BlockPos(1, 1, 1);
         var wheat = (CropBlock) Blocks.WHEAT;
@@ -88,8 +89,8 @@ public final class FunnyEffectsTestFunctions {
         helper.succeed();
     }
 
-    @GameTest(template = "funnyeffects:empty3x3x3")
-    public static void gravityPickaxe_teleportsDrops(@NotNull GameTestHelper helper) {
+    @EmptyTemplate(value = "3x3x3", floor = true)
+    public static void gravityPickaxe_teleportsDrops(@NotNull ExtendedGameTestHelper helper) {
         var player = makePlayer(helper);
         var pos = new BlockPos(1, 1, 1);
         helper.setBlock(pos, Blocks.IRON_ORE);
@@ -107,8 +108,8 @@ public final class FunnyEffectsTestFunctions {
         helper.succeed();
     }
 
-    @GameTest(template = "funnyeffects:empty3x3x3")
-    public static void bouncyBoots_noFallDamage(@NotNull GameTestHelper helper) {
+    @EmptyTemplate(value = "3x3x3", floor = true)
+    public static void bouncyBoots_noFallDamage(@NotNull ExtendedGameTestHelper helper) {
         var player = makePlayer(helper);
         player.setItemSlot(EquipmentSlot.FEET, new ItemStack(ModItems.BOUNCY_BOOTS.get()));
         float before = player.getHealth();
@@ -120,8 +121,8 @@ public final class FunnyEffectsTestFunctions {
         helper.succeed();
     }
 
-    @GameTest(template = "funnyeffects:empty3x3x3")
-    public static void dinnerboneBat_flipsEntity(@NotNull GameTestHelper helper) {
+    @EmptyTemplate(value = "3x3x3", floor = true)
+    public static void dinnerboneBat_flipsEntity(@NotNull ExtendedGameTestHelper helper) {
         var player = makePlayer(helper);
         var pig = helper.spawn(EntityType.PIG, new BlockPos(1, 2, 1));
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.DINNERBONE_BAT.get()));
@@ -136,8 +137,8 @@ public final class FunnyEffectsTestFunctions {
         helper.succeed();
     }
 
-    @GameTest(template = "funnyeffects:empty3x3x3")
-    public static void partyPopper_consumed(@NotNull GameTestHelper helper) {
+    @EmptyTemplate(value = "3x3x3", floor = true)
+    public static void partyPopper_consumed(@NotNull ExtendedGameTestHelper helper) {
         var player = makePlayer(helper);
         var stack = new ItemStack(ModItems.PARTY_POPPER.get(), 1);
         player.setItemInHand(InteractionHand.MAIN_HAND, stack);
@@ -148,7 +149,7 @@ public final class FunnyEffectsTestFunctions {
         helper.succeed();
     }
 
-    private static @NotNull ServerPlayer makePlayer(@NotNull GameTestHelper helper) {
+    private static @NotNull ServerPlayer makePlayer(@NotNull ExtendedGameTestHelper helper) {
         var player = helper.makeMockPlayer(GameType.SURVIVAL);
         var abs = helper.absolutePos(player.blockPosition());
         player.moveTo(abs.getX() + 1.5, abs.getY() + 2, abs.getZ() + 1.5);

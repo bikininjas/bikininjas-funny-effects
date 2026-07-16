@@ -59,6 +59,10 @@ dependencies {
 
     // JetBrains annotations
     implementation libs.jetbrains.annotations
+
+    // NeoForge Test Framework
+    compileOnly "net.neoforged:testframework:${project.neo_version}"
+    runtimeOnly "net.neoforged:testframework:${project.neo_version}"
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
