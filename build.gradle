@@ -61,8 +61,8 @@ repositories {
 }
 
 dependencies {
-    // core-lib — résolue via composite build en local, téléchargée en CI
-    implementation libs.core.lib
+    // core-lib — resolved via composite build locally; CI passes concrete version via -PcoreLibVersion
+    implementation "com.bikininjas.corelib:core_lib:${project.findProperty('coreLibVersion') ?: '1.+'}"
 
     // JetBrains annotations
     implementation libs.jetbrains.annotations
@@ -72,8 +72,8 @@ dependencies {
     runtimeOnly "net.neoforged:testframework:${project.neo_version}"
 
     // JUnit 5 (Jupiter) for unit tests
-    testImplementation "org.junit.jupiter:junit-jupiter:5.11.4"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.11.4"
+    testImplementation libs.junit.jupiter
+    testRuntimeOnly libs.junit.platform.launcher
 }
 
 test {
