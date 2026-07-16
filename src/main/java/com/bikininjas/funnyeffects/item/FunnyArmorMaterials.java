@@ -49,6 +49,11 @@ public final class FunnyArmorMaterials {
             defense(1, 0, 0, 0), 25, SoundEvents.ARMOR_EQUIP_GOLD, 0.0F, 0.0F,
             () -> Ingredient.of(Items.PHANTOM_MEMBRANE));
 
+    /** Netherite-tier boots material (2 armor boots only). Lava walker effect. */
+    public static final Holder<ArmorMaterial> LAVA_WALKER = register("lava_walker",
+            defense(0, 0, 0, 2), 15, SoundEvents.ARMOR_EQUIP_NETHERITE, 0.0F, 0.0F,
+            () -> Ingredient.of(Items.OBSIDIAN));
+
     private static @NotNull EnumMap<ArmorItem.Type, Integer> defense(int helmet, int chestplate,
                                                                       int leggings, int boots) {
         EnumMap<ArmorItem.Type, Integer> map = new EnumMap<>(ArmorItem.Type.class);

@@ -135,4 +135,29 @@ public final class ModItems {
     /** Utility item: right-click to fire a confetti burst and consume the item. */
     public static final DeferredItem<Item> PARTY_POPPER = MOD_ITEMS.registerItem("party_popper",
             Item::new);
+
+    // -- New items (Phase 5) ---------------------------------------------------
+
+    /** Plain item: right-click to float for 5s and launch nearby mobs upward. */
+    public static final DeferredItem<Item> GRAVITY_ANCHOR = MOD_ITEMS.registerItem("gravity_anchor",
+            props -> new Item(props.stacksTo(1).fireResistant()));
+
+    /** Utility item: capture a mob into NBT and release it later. */
+    public static final DeferredItem<Item> MOB_CATCHER = MOD_ITEMS.registerItem("mob_catcher",
+            props -> new MobCatcherItem(props.stacksTo(1)));
+
+    /** Ender-pearl-like item: throws a pearl without consuming, 10% Endermite spawn. */
+    public static final DeferredItem<Item> INFINITE_PEARL = MOD_ITEMS.registerItem("infinite_pearl",
+            props -> new Item(props.stacksTo(1).fireResistant()));
+
+    /** Diamond axe: breaks the whole connected log tree at once. */
+    public static final DeferredItem<net.minecraft.world.item.AxeItem> TREECAPITATOR =
+            MOD_ITEMS.registerItem("treecapitator",
+                    props -> new net.minecraft.world.item.AxeItem(Tiers.DIAMOND,
+                            props.attributes(net.minecraft.world.item.AxeItem.createAttributes(Tiers.DIAMOND, 5.0F, 1.0F))
+                                    .stacksTo(1)));
+
+    /** Netherite-tier boots: turn lava to obsidian while sprinting. */
+    public static final DeferredItem<ArmorItem> LAVA_WALKER = MOD_ITEMS.registerItem("lava_walker",
+            props -> new ArmorItem(FunnyArmorMaterials.LAVA_WALKER, ArmorItem.Type.BOOTS, props.stacksTo(1)));
 }

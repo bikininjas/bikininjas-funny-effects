@@ -13,17 +13,20 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -32,17 +35,20 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * All gameplay event subscriptions for Funny Effects items. Registered on the NeoForge
@@ -675,5 +681,242 @@ public final class ItemEvents {
         Objects.requireNonNull(entity, "entity must not be null");
         Objects.requireNonNull(item, "item must not be null");
         return entity.getMainHandItem().is(item) || entity.getOffhandItem().is(item);
+    }
+
+    // -- Phase 5 item handlers -------------------------------------------------
+
+    /** Lava walker: obsidian positions and the server tick time they were solidified. */
+    private static final java.util.Map<BlockPos, Long> LAVA_WALKER_SOLIDIFIED = new java.util.concurrent.ConcurrentHashMap<>();
+
+    private static final long LAVA_RESTORE_DELAY_TICKS = 60L; // 3 seconds at 20 TPS
+
+    /**
+     * Gravity anchor: right-click floats the player for 5s and launches nearby mobs upward.
+     */
+    @SubscribeEvent
+    public static void gravityAnchor_onRightClick(@NotNull PlayerInteractEvent.RightClickItem event) {
+        Player player = event.getEntity();
+        ItemStack stack = event.getItemStack();
+        if (!stack.is(ModItems.GRAVITY_ANCHOR.get())) {
+            return;
+        }
+        Level level = player.level();
+        if (level.isClientSide()) {
+            return;
+        }
+        if (player.getCooldowns().isOnCooldown(stack.getItem())) {
+            return;
+        }
+        try {
+            player.setNoGravity(true);
+            player.setDeltaMovement(0.0D, 0.0D, 0.0D);
+            player.hurtMarked = true;
+            // Launch nearby living entities upward.
+            AABB area = new AABB(player.blockPosition()).inflate(3.0D);
+            for (LivingEntity mob : level.getEntitiesOfClass(LivingEntity.class, area)) {
+                if (mob == player) {
+                    continue;
+                }
+                mob.setDeltaMovement(mob.getDeltaMovement().add(0.0D, 2.0D, 0.0D));
+                mob.hurtMarked = true;
+            }
+            // Reset gravity after 5 seconds (100 ticks) via a scheduled server task.
+            if (level instanceof ServerLevel serverLevel && player.getServer() != null) {
+                player.getServer().tell(new net.minecraft.server.TickTask(serverLevel.getServer().getTickCount() + 100,
+                        () -> {
+                            if (player.isAlive()) {
+                                player.setNoGravity(false);
+                            }
+                        }));
+            }
+            player.getCooldowns().addCooldown(stack.getItem(), 300); // 15 seconds
+            level.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT,
+                    SoundSource.PLAYERS, 1.0F, 1.0F);
+            LOGGER.info("Gravity anchor activated for {}", player.getName().getString());
+        } catch (Exception e) {
+            LOGGER.error("Failed to activate gravity anchor")
+                    .ctx("player", player.getName().getString())
+                    .cause(e)
+                    .report();
+        }
+    }
+
+    /**
+     * Infinite pearl: right-click throws an ender pearl without consuming the item.
+     * 10% chance to spawn an Endermite at the destination.
+     */
+    @SubscribeEvent
+    public static void infinitePearl_onRightClick(@NotNull PlayerInteractEvent.RightClickItem event) {
+        Player player = event.getEntity();
+        ItemStack stack = event.getItemStack();
+        if (!stack.is(ModItems.INFINITE_PEARL.get())) {
+            return;
+        }
+        Level level = player.level();
+        if (level.isClientSide()) {
+            return;
+        }
+        if (player.getCooldowns().isOnCooldown(stack.getItem())) {
+            return;
+        }
+        try {
+            var pearl = new net.minecraft.world.entity.projectile.ThrownEnderpearl(level, player);
+            pearl.setItem(new ItemStack(net.minecraft.world.item.Items.ENDER_PEARL));
+            Vec3 look = player.getLookAngle();
+            pearl.setPos(player.getX(), player.getEyeY() - 0.1D, player.getZ());
+            pearl.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.5F, 1.0F);
+            level.addFreshEntity(pearl);
+            player.getCooldowns().addCooldown(stack.getItem(), 20);
+            // 10% chance to spawn an Endermite at the destination after the pearl lands.
+            if (level instanceof ServerLevel serverLevel && new Random().nextDouble() < 0.10D) {
+                BlockPos dest = BlockPos.containing(player.getX() + look.x * 8.0D,
+                        player.getY() + look.y * 8.0D, player.getZ() + look.z * 8.0D);
+                Endermite mite = EntityType.ENDERMITE.create(serverLevel);
+                if (mite != null) {
+                    mite.moveTo(dest.getX() + 0.5D, dest.getY(), dest.getZ() + 0.5D, 0.0F, 0.0F);
+                    serverLevel.addFreshEntity(mite);
+                    LOGGER.info("Infinite pearl spawned an Endermite at {}", dest);
+                }
+            }
+            event.setCanceled(true);
+        } catch (Exception e) {
+            LOGGER.error("Failed to throw infinite pearl")
+                    .ctx("player", player.getName().getString())
+                    .cause(e)
+                    .report();
+        }
+    }
+
+    /**
+     * Treecapitator: breaking a log while holding the axe breaks the whole connected tree.
+     */
+    @SubscribeEvent
+    public static void treecapitator_onBreak(@NotNull BlockEvent.BreakEvent event) {
+        Player player = event.getPlayer();
+        Level level = player.level();
+        if (level.isClientSide()) {
+            return;
+        }
+        if (!isHolding(player, ModItems.TREECAPITATOR.get())) {
+            return;
+        }
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        try {
+            BlockPos start = event.getPos();
+            BlockState startState = event.getState();
+            if (!startState.is(net.minecraft.tags.BlockTags.LOGS)) {
+                return;
+            }
+            var targetBlock = startState.getBlock();
+            Deque<BlockPos> queue = new ArrayDeque<>();
+            java.util.Set<BlockPos> visited = new java.util.HashSet<>();
+            queue.add(start);
+            visited.add(start);
+            List<BlockPos> tree = new java.util.ArrayList<>();
+            while (!queue.isEmpty()) {
+                BlockPos current = queue.poll();
+                tree.add(current);
+                for (var dir : net.minecraft.core.Direction.values()) {
+                    if (dir.getAxis() == net.minecraft.core.Direction.Axis.Y
+                            || dir.getAxis() == net.minecraft.core.Direction.Axis.X
+                            || dir.getAxis() == net.minecraft.core.Direction.Axis.Z) {
+                        BlockPos neighbor = current.relative(dir);
+                        if (visited.contains(neighbor)) {
+                            continue;
+                        }
+                        BlockState neighborState = level.getBlockState(neighbor);
+                        if (neighborState.getBlock() == targetBlock && neighborState.is(net.minecraft.tags.BlockTags.LOGS)) {
+                            visited.add(neighbor);
+                            queue.add(neighbor);
+                        }
+                    }
+                }
+            }
+            for (BlockPos pos : tree) {
+                BlockState state = level.getBlockState(pos);
+                List<ItemStack> drops = Block.getDrops(state, serverLevel, pos,
+                        level.getBlockEntity(pos), player, player.getMainHandItem());
+                level.destroyBlock(pos, false);
+                for (ItemStack drop : drops) {
+                    if (!drop.isEmpty()) {
+                        serverLevel.addFreshEntity(new ItemEntity(serverLevel,
+                                pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, drop));
+                    }
+                }
+            }
+            event.setCanceled(true);
+            LOGGER.info("Treecapitator felled {} logs", tree.size());
+        } catch (Exception e) {
+            LOGGER.error("Failed to treecapitate")
+                    .ctx("player", player.getName().getString())
+                    .cause(e)
+                    .report();
+        }
+    }
+
+    /**
+     * Lava walker boots: while sprinting, solidify lava to obsidian around the player's feet.
+     */
+    @SubscribeEvent
+    public static void lavaWalker_onTick(@NotNull PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
+        if (player.level().isClientSide()) {
+            return;
+        }
+        if (!player.getItemBySlot(EquipmentSlot.FEET).is(ModItems.LAVA_WALKER.get())) {
+            return;
+        }
+        if (!player.isSprinting()) {
+            return;
+        }
+        try {
+            Level level = player.level();
+            BlockPos feet = player.blockPosition();
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    BlockPos pos = feet.offset(dx, 0, dz);
+                    if (level.getBlockState(pos).is(Blocks.LAVA)) {
+                        level.setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
+                        LAVA_WALKER_SOLIDIFIED.put(pos.immutable(), level.getGameTime());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to apply lava walker")
+                    .ctx("player", player.getName().getString())
+                    .cause(e)
+                    .report();
+        }
+    }
+
+    /**
+     * Lava walker restore: revert obsidian back to lava 3 seconds after the player leaves.
+     */
+    @SubscribeEvent
+    public static void lavaWalker_onServerTick(@NotNull ServerTickEvent.Post event) {
+        if (LAVA_WALKER_SOLIDIFIED.isEmpty()) {
+            return;
+        }
+        try {
+            var server = event.getServer();
+            long now = server.getTickCount();
+            var iterator = LAVA_WALKER_SOLIDIFIED.entrySet().iterator();
+            while (iterator.hasNext()) {
+                var entry = iterator.next();
+                if (now - entry.getValue() >= LAVA_RESTORE_DELAY_TICKS) {
+                    BlockPos pos = entry.getKey();
+                    for (var level : server.getAllLevels()) {
+                        if (level.getBlockState(pos).is(Blocks.OBSIDIAN)) {
+                            level.setBlock(pos, Blocks.LAVA.defaultBlockState(), 3);
+                        }
+                    }
+                    iterator.remove();
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to restore lava walker obsidian").cause(e).report();
+        }
     }
 }

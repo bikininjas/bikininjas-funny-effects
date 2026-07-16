@@ -51,6 +51,11 @@ public final class ModCreativeTab {
                     output.accept(ModItems.REPLANTER_HOE.get());
                     output.accept(ModItems.DINNERBONE_BAT.get());
                     output.accept(ModItems.PARTY_POPPER.get());
+                    output.accept(ModItems.GRAVITY_ANCHOR.get());
+                    output.accept(ModItems.MOB_CATCHER.get());
+                    output.accept(ModItems.INFINITE_PEARL.get());
+                    output.accept(ModItems.TREECAPITATOR.get());
+                    output.accept(ModItems.LAVA_WALKER.get());
                 });
         return builder.build();
     }

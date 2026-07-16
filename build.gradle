@@ -44,6 +44,13 @@ neoForge {
             sourceSet(sourceSets.main)
         }
     }
+
+    // Enable Minecraft on the JUnit `test` source set so unit tests can reference
+    // net.minecraft.* types and run through the FML JUnit launcher.
+    unitTest {
+        enable()
+        testedMod = mods."${project.mod_id}"
+    }
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
@@ -63,6 +70,14 @@ dependencies {
     // NeoForge Test Framework
     compileOnly "net.neoforged:testframework:${project.neo_version}"
     runtimeOnly "net.neoforged:testframework:${project.neo_version}"
+
+    // JUnit 5 (Jupiter) for unit tests
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.4"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.11.4"
+}
+
+test {
+    useJUnitPlatform()
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

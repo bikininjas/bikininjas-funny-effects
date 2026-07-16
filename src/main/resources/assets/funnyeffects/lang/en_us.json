@@ -21,5 +21,10 @@
   "item.funnyeffects.replanter_hoe": "Replanter Hoe",
   "item.funnyeffects.dinnerbone_bat": "Dinnerbone Bat",
   "item.funnyeffects.party_popper": "Party Popper",
+  "item.funnyeffects.gravity_anchor": "Gravity Anchor",
+  "item.funnyeffects.mob_catcher": "Mob Catcher",
+  "item.funnyeffects.infinite_pearl": "Infinite Ender Pearl",
+  "item.funnyeffects.treecapitator": "Treecapitator",
+  "item.funnyeffects.lava_walker": "Lava Walker Boots",
   "itemGroup.funnyeffects": "Funny Effects"
 }
