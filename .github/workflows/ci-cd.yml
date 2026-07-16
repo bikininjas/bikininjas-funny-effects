@@ -1,0 +1,119 @@
+name: CI/CD Funny Effects
+
+on:
+  push:
+    branches: [master]
+    paths-ignore: ['**.md']
+  pull_request:
+    branches: [master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Resolve core-lib version
+        id: corelib
+        run: |
+          VERSION=$(curl -sSfL https://api.github.com/repos/bikininjas/bikininjas-mclib/releases/latest | jq -r .tag_name | sed 's/^v//')
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Download core-lib
+        run: |
+          mkdir -p libs
+          curl -sSfL -o "libs/core_lib-${{ steps.corelib.outputs.version }}.jar" \
+            "https://github.com/bikininjas/bikininjas-mclib/releases/download/v${{ steps.corelib.outputs.version }}/core_lib-${{ steps.corelib.outputs.version }}.jar"
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Build & Test
+        run: ./gradlew build
+
+  release:
+    needs: build
+    if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Resolve core-lib version
+        id: corelib
+        run: |
+          VERSION=$(curl -sSfL https://api.github.com/repos/bikininjas/bikininjas-mclib/releases/latest | jq -r .tag_name | sed 's/^v//')
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Download core-lib
+        run: |
+          mkdir -p libs
+          curl -sSfL -o "libs/core_lib-${{ steps.corelib.outputs.version }}.jar" \
+            "https://github.com/bikininjas/bikininjas-mclib/releases/download/v${{ steps.corelib.outputs.version }}/core_lib-${{ steps.corelib.outputs.version }}.jar"
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Compute version
+        id: version
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LATEST_TAG" ]; then
+            COMMITS=$(git log --oneline)
+            HAS_FEAT=$(echo "$COMMITS" | grep -ciE '^[a-f0-9]+ feat[(:!]' || true)
+            HAS_FIX=$(echo "$COMMITS" | grep -ciE '^[a-f0-9]+ fix[(:!]' || true)
+            if [ "$HAS_FEAT" -gt 0 ]; then
+              echo "version=0.1.0" >> $GITHUB_OUTPUT
+            elif [ "$HAS_FIX" -gt 0 ]; then
+              echo "version=0.0.1" >> $GITHUB_OUTPUT
+            else
+              echo "No semver-relevant commits. Skipping release." && exit 78
+            fi
+          else
+            BASE=${LATEST_TAG#v}
+            IFS='.' read -r MAJ MIN PAT <<< "$BASE"
+            COMMITS=$(git log ${LATEST_TAG}..HEAD --oneline 2>/dev/null || echo "")
+            HAS_BREAK=$(echo "$COMMITS" | grep -ciE '^[a-f0-9]+ \S+!:|BREAKING CHANGE' || true)
+            HAS_FEAT=$(echo "$COMMITS" | grep -ciE '^[a-f0-9]+ feat[(:!]' || true)
+            HAS_FIX=$(echo "$COMMITS" | grep -ciE '^[a-f0-9]+ (fix|perf)[(:!]' || true)
+            if [ "$HAS_BREAK" -gt 0 ]; then
+              MAJ=$((MAJ + 1)); MIN=0; PAT=0
+            elif [ "$HAS_FEAT" -gt 0 ]; then
+              MIN=$((MIN + 1)); PAT=0
+            elif [ "$HAS_FIX" -gt 0 ]; then
+              PAT=$((PAT + 1))
+            else
+              echo "No semver-relevant commits. Skipping release." && exit 78
+            fi
+            echo "version=${MAJ}.${MIN}.${PAT}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build JAR
+        run: ./gradlew build -Pmod_version=${{ steps.version.outputs.version }}
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Funny Effects v${{ steps.version.outputs.version }}
+          body: |
+            ## Funny Effects v${{ steps.version.outputs.version }}
+
+            **Dépendances :** core-lib >= 1.0.0
+
+            ### Changements
+            ${{ github.event.head_commit.message }}
+          files: build/libs/funnyeffects-${{ steps.version.outputs.version }}.jar
