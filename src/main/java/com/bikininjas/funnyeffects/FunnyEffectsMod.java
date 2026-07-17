@@ -3,6 +3,8 @@ package com.bikininjas.funnyeffects;
 import com.bikininjas.corelib.log.LogManager;
 import com.bikininjas.corelib.log.ModLogger;
 import com.bikininjas.corelib.color.ColorAPI;
+import com.bikininjas.corelib.randomevent.RandomEventManager;
+import com.bikininjas.corelib.randomevent.RandomEvents;
 import com.bikininjas.funnyeffects.item.ArmorHandlers;
 import com.bikininjas.funnyeffects.item.CombatHandlers;
 import com.bikininjas.funnyeffects.item.EntityInteractHandlers;
@@ -44,6 +46,18 @@ public final class FunnyEffectsMod {
         ArmorHandlers.init();
         GadgetHandlers.init();
         EntityInteractHandlers.init();
+
+        // Configure random events — fires every 5-15 minutes
+        var rem = RandomEventManager.getInstance();
+        rem.setInterval(5 * 60 * 20, 15 * 60 * 20); // 5-15 min in ticks
+        rem.setEnabled(true);
+
+        // Register fun random events
+        rem.register(RandomEvents.announceEvent("A mysterious giggle echoes from nowhere..."), "mysterious_giggle");
+        rem.register(RandomEvents.announceEvent("Did something just move?! You feel watched..."), "something_moved");
+        rem.register(RandomEvents.spawnEntityEvent(net.minecraft.world.entity.EntityType.CHICKEN, 10), "chicken_invasion");
+        rem.register(RandomEvents.randomWeatherEvent(), "random_weather");
+
         TooltipHandler.init();
 
         ColorAPI.tintItem(modBus, ModItems.BOUNCY_SLIME, 0xFF88FF88);
