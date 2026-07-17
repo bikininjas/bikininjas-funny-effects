@@ -1,0 +1,78 @@
+---- Minecraft Crash Report ----
+// But it works on my machine.
+
+Time: 2026-07-17 08:14:51
+Description: Exception in server tick loop
+
+java.lang.IllegalStateException: Failed to initialize server
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.runServer(MinecraftServer.java:677) ~[neoforge-21.1.238.jar%23125!/:?] {re:classloading,pl:accesstransformer:B}
+	at TRANSFORMER/minecraft@1.21.1/net.minecraft.server.MinecraftServer.lambda$spin$2(MinecraftServer.java:267) ~[neoforge-21.1.238.jar%23125!/:?] {re:classloading,pl:accesstransformer:B}
+	at java.base/java.lang.Thread.run(Thread.java:1583) [?:?] {}
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- System Details --
+Details:
+	Minecraft Version: 1.21.1
+	Minecraft Version ID: 1.21.1
+	Operating System: Linux (amd64) version 6.6.87.2-microsoft-standard-WSL2
+	Java Version: 21.0.5, Eclipse Adoptium
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode, sharing), Eclipse Adoptium
+	Memory: 313477728 bytes (298 MiB) / 545259520 bytes (520 MiB) up to 14747172864 bytes (14064 MiB)
+	CPUs: 8
+	Processor Vendor: AuthenticAMD
+	Processor Name: AMD Ryzen 7 9800X3D 8-Core Processor
+	Identifier: AuthenticAMD Family 26 Model 68 Stepping 0
+	Microarchitecture: unknown
+	Frequency (GHz): -0.00
+	Number of physical packages: 1
+	Number of physical CPUs: 8
+	Number of logical CPUs: 8
+	Graphics card #0 name: Basic Render Driver
+	Graphics card #0 vendor: Microsoft Corporation
+	Graphics card #0 VRAM (MiB): 0.00
+	Graphics card #0 deviceId: unknown
+	Graphics card #0 versionInfo: version: 00
+	Virtual memory max (MiB): 44504.09
+	Virtual memory used (MiB): 11249.15
+	Swap memory total (MiB): 16384.00
+	Swap memory used (MiB): 0.00
+	Space in storage for jna.tmpdir (MiB): <path not set>
+	Space in storage for org.lwjgl.system.SharedLibraryExtractPath (MiB): <path not set>
+	Space in storage for io.netty.native.workdir (MiB): <path not set>
+	Space in storage for java.io.tmpdir (MiB): available: 697750.25, total: 1031018.44
+	Space in storage for workdir (MiB): available: 697750.25, total: 1031018.44
+	JVM Flags: 0 total; 
+	Server Running: true
+	Active Data Packs: vanilla, mod_data, mod/testframework, mod/funnyeffects, mod/core_lib, mod/neoforge
+	Available Data Packs: bundle, trade_rebalance, vanilla, mod/core_lib, mod/funnyeffects, mod/neoforge, mod/testframework, mod_data
+	Enabled Feature Flags: minecraft:vanilla
+	World Generation: Stable
+	World Seed: 2883491783603483016
+	Is Modded: Definitely; Server brand changed to 'neoforge'
+	Type: Dedicated Server (map_server.txt)
+	ModLauncher: 11.0.5+main.901c6ea8
+	ModLauncher launch target: forgeserverdev
+	ModLauncher services: 
+		sponge-mixin-0.15.2+mixin.0.8.7.jar mixin PLUGINSERVICE 
+		loader-4.0.43.jar slf4jfixer PLUGINSERVICE 
+		loader-4.0.43.jar runtime_enum_extender PLUGINSERVICE 
+		at-modlauncher-10.0.1.jar accesstransformer PLUGINSERVICE 
+		loader-4.0.43.jar runtimedistcleaner PLUGINSERVICE 
+		modlauncher-11.0.5.jar mixin TRANSFORMATIONSERVICE 
+		modlauncher-11.0.5.jar fml TRANSFORMATIONSERVICE 
+	FML Language Providers: 
+		javafml@4.0
+		lowcodefml@4.0
+		minecraft@4.0
+	Mod List: 
+		bikininjas-core_lib-1.1.0.jar                     |Core Lib                      |core_lib                      |1.1.0               |Manifest: NOSIGNATURE
+		main                                              |Funny Effects                 |funnyeffects                  |0.1.0               |Manifest: NOSIGNATURE
+		neoforge-21.1.238.jar                             |Minecraft                     |minecraft                     |1.21.1              |Manifest: NOSIGNATURE
+		neoforge-21.1.238.jar                             |NeoForge                      |neoforge                      |21.1.238            |Manifest: NOSIGNATURE
+		testframework-21.1.238.jar                        |Test Framework                |testframework                 |21.1.238            |Manifest: NOSIGNATURE
+	Crash Report UUID: 0587944a-3532-4ba5-972f-d0f6fa9d4980
+	FML: 4.0.43
+	NeoForge: 21.1.238
