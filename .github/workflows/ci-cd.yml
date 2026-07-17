@@ -46,8 +46,14 @@ jobs:
 
       - name: Smoke test (start server)
         run: |
+          rm -rf run/
+          mkdir -p run
           echo "eula=true" > run/eula.txt
+          echo "server-port=25568" > run/server.properties
+          echo "online-mode=false" >> run/server.properties
           timeout 90 ./gradlew runServer -PcoreLibVersion=${{ steps.corelib.outputs.version }} 2>&1 || [ $? -eq 124 ]
+          fuser -k 25568/tcp 2>/dev/null || true
+          rm -rf run/
 
   release:
     name: CD — Release
