@@ -189,15 +189,14 @@ public final class ArmorHandlers {
         }
         var server = event.getServer();
         long now = server.getTickCount();
+        var overworld = server.overworld();
         var iterator = LAVA_WALKER_SOLIDIFIED.entrySet().iterator();
         while (iterator.hasNext()) {
             var entry = iterator.next();
             if (now - entry.getValue() >= LAVA_RESTORE_DELAY_TICKS) {
                 BlockPos pos = entry.getKey();
-                for (var level : server.getAllLevels()) {
-                    if (level.getBlockState(pos).is(Blocks.OBSIDIAN)) {
-                        level.setBlock(pos, Blocks.LAVA.defaultBlockState(), 3);
-                    }
+                if (overworld.getBlockState(pos).is(Blocks.OBSIDIAN)) {
+                    overworld.setBlock(pos, Blocks.LAVA.defaultBlockState(), 3);
                 }
                 iterator.remove();
             }
