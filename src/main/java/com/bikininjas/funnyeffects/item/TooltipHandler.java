@@ -49,7 +49,9 @@ public final class TooltipHandler {
             Map.entry("lava_walker", new String[]{"§5◆ Armor — Boots", "§7Defense: +2", "§7Turns lava to obsidian while sprinting"}),
             Map.entry("chicken_wand", new String[]{"§d◆ Interaction", "§7Makes mobs bawk like chickens", "§7Cooldown: 1.5s"}),
             Map.entry("dinnerbone_bat", new String[]{"§d◆ Interaction", "§7Flips entity upside-down (Dinnerbone)", "§7Cooldown: 1.5s"}),
-            Map.entry("mob_catcher", new String[]{"§d◆ Interaction", "§7Captures + releases any living mob"})
+            Map.entry("mob_catcher", new String[]{"§d◆ Interaction", "§7Captures + releases any living mob"}),
+            Map.entry("mystery_box", new String[]{"§9◆ Gadget", "§7Gives random loot on right-click"}),
+            Map.entry("void_pearl_trap", new String[]{"§9◆ Gadget", "§7Teleport another player 20 blocks away"})
     );
 
     static {

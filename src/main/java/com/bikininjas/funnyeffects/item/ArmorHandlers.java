@@ -5,6 +5,7 @@ import com.bikininjas.corelib.log.ModLogger;
 import com.bikininjas.funnyeffects.FunnyEffectsMod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -141,7 +142,7 @@ public final class ArmorHandlers {
         player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0, true, false));
         Level level = player.level();
         level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(10),
-                e -> e != player).forEach(e ->
+                e -> e != player && e instanceof Enemy).forEach(e ->
                 e.addEffect(new MobEffectInstance(MobEffects.GLOWING, 60, 0, true, false)));
     }
 
@@ -172,7 +173,7 @@ public final class ArmorHandlers {
                 BlockPos pos = feet.offset(dx, 0, dz);
                 if (level.getBlockState(pos).is(Blocks.LAVA)) {
                     level.setBlock(pos, Blocks.OBSIDIAN.defaultBlockState(), 3);
-                    LAVA_WALKER_SOLIDIFIED.put(pos.immutable(), level.getGameTime());
+                    LAVA_WALKER_SOLIDIFIED.put(pos.immutable(), (long) ((ServerLevel) level).getServer().getTickCount());
                 }
             }
         }

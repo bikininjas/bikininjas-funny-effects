@@ -56,6 +56,8 @@ public final class ModCreativeTab {
                     output.accept(ModItems.INFINITE_PEARL.get());
                     output.accept(ModItems.TREECAPITATOR.get());
                     output.accept(ModItems.LAVA_WALKER.get());
+                    output.accept(ModItems.MYSTERY_BOX.get());
+                    output.accept(ModItems.VOID_PEARL_TRAP.get());
                 });
         return builder.build();
     }

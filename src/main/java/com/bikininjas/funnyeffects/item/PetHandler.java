@@ -9,6 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -43,18 +44,40 @@ public final class PetHandler {
         LOGGER.info("Pet registered: {} for player {}", pet.getName().getString(), owner.getName().getString());
     }
 
-    private static final class PetData {
-        final UUID ownerId;
-        final long spawnedAt;
-
-        PetData(UUID ownerId, long spawnedAt) {
-            this.ownerId = ownerId;
-            this.spawnedAt = spawnedAt;
+    public static @NotNull Map<UUID, PetData> getActivePets(@NotNull UUID ownerId) {
+        java.util.Objects.requireNonNull(ownerId, "ownerId must not be null");
+        Map<UUID, PetData> result = new java.util.HashMap<>();
+        for (var entry : activePets.entrySet()) {
+            if (entry.getValue().ownerId.equals(ownerId)) {
+                result.put(entry.getKey(), entry.getValue());
+            }
         }
+        return result;
     }
+
+    public record PetData(UUID ownerId, long spawnedAt) {}
 
     private static final class EventHandler {
         private EventHandler() {
+        }
+
+        @SubscribeEvent
+        static void onPlayerLogout(@NotNull PlayerEvent.PlayerLoggedOutEvent event) {
+            var playerId = event.getEntity().getUUID();
+            var iterator = activePets.entrySet().iterator();
+            while (iterator.hasNext()) {
+                var entry = iterator.next();
+                if (entry.getValue().ownerId.equals(playerId)) {
+                    for (var level : event.getEntity().getServer().getAllLevels()) {
+                        Entity pet = level.getEntity(entry.getKey());
+                        if (pet != null) {
+                            pet.discard();
+                            break;
+                        }
+                    }
+                    iterator.remove();
+                }
+            }
         }
 
         @SubscribeEvent

@@ -143,9 +143,23 @@ public final class GadgetHandlers {
             return;
         }
         Vec3 look = player.getLookAngle();
-        player.teleportTo(player.getX() + look.x * 20.0D,
-                player.getY() + look.y * 20.0D,
-                player.getZ() + look.z * 20.0D);
+        double destX = player.getX() + look.x * 20.0D;
+        double destY = player.getY() + look.y * 20.0D;
+        double destZ = player.getZ() + look.z * 20.0D;
+        // Void guard + block safety
+        if (destY < player.level().getMinBuildHeight()) {
+            destY = player.level().getMinBuildHeight() + 1;
+        }
+        if (destY > player.level().getMaxBuildHeight() - 1) {
+            destY = player.level().getMaxBuildHeight() - 2;
+        }
+        BlockPos destBlock = BlockPos.containing(destX, destY, destZ);
+        BlockPos headBlock = BlockPos.containing(destX, destY + 1.0D, destZ);
+        if (!level.getBlockState(destBlock).isAir() || !level.getBlockState(headBlock).isAir()) {
+            LOGGER.info("Void pearl blocked — destination obstructed for {}", player.getName().getString());
+            return;
+        }
+        player.teleportTo(destX, destY, destZ);
         level.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT,
                 SoundSource.PLAYERS, 1.0F, 1.0F);
         player.getCooldowns().addCooldown(stack.getItem(), 30);

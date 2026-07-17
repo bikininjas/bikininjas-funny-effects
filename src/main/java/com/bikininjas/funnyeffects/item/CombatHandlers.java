@@ -59,8 +59,8 @@ public final class CombatHandlers {
         if (target.level().isClientSide()) {
             return;
         }
-        Entity direct = event.getSource().getDirectEntity();
-        if (!(direct instanceof Player player)) {
+        Entity source = event.getSource().getEntity();
+        if (!(source instanceof Player player)) {
             return;
         }
         if (!isHolding(player, ModItems.LIFESTEAL_BLADE.get())) {
@@ -81,6 +81,10 @@ public final class CombatHandlers {
     public static void onIncomingDamage(@NotNull LivingIncomingDamageEvent event) {
         LivingEntity victim = event.getEntity();
         if (victim.level().isClientSide()) {
+            return;
+        }
+        // Prevent recursion: skip if damage is our own thorns reflection
+        if (event.getSource().getMsgId().equals("thorns")) {
             return;
         }
         ItemStack chest = victim.getItemBySlot(EquipmentSlot.CHEST);
@@ -106,8 +110,8 @@ public final class CombatHandlers {
         if (target.level().isClientSide()) {
             return;
         }
-        Entity direct = event.getSource().getDirectEntity();
-        if (!(direct instanceof LivingEntity attacker)) {
+        Entity source = event.getSource().getEntity();
+        if (!(source instanceof LivingEntity attacker)) {
             return;
         }
         if (!isHolding(attacker, ModItems.YEETER_HAMMER.get())) {
@@ -127,8 +131,8 @@ public final class CombatHandlers {
         if (target.level().isClientSide()) {
             return;
         }
-        Entity direct = event.getSource().getDirectEntity();
-        if (!(direct instanceof LivingEntity attacker)) {
+        Entity source = event.getSource().getEntity();
+        if (!(source instanceof LivingEntity attacker)) {
             return;
         }
         if (!isHolding(attacker, ModItems.THUNDER_SWORD.get())) {
@@ -157,7 +161,7 @@ public final class CombatHandlers {
         if (!isHolding(attacker, ModItems.SLAPFISH.get())) {
             return;
         }
-        if (attacker instanceof Player p && p.getCooldowns().isOnCooldown(p.getMainHandItem().getItem())) return;
+        if (attacker instanceof Player p && p.getCooldowns().isOnCooldown(ModItems.SLAPFISH.get())) return;
         // Cancel the default damage entirely.
         event.getContainer().setNewDamage(0.0F);
         // Knock the victim away along the attacker's look vector.
@@ -167,7 +171,7 @@ public final class CombatHandlers {
         level.playSound(null, victim.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP,
                 SoundSource.PLAYERS, 1.0F, 1.0F);
         if (attacker instanceof Player slapPlayer) {
-            slapPlayer.getCooldowns().addCooldown(slapPlayer.getMainHandItem().getItem(), 30);
+            slapPlayer.getCooldowns().addCooldown(ModItems.SLAPFISH.get(), 30);
         }
         LOGGER.info("Slapfish! {} slapped {}", attacker.getName().getString(), victim.getName().getString());
     }
@@ -182,14 +186,14 @@ public final class CombatHandlers {
         if (level.isClientSide()) {
             return;
         }
-        Entity source = event.getSource().getDirectEntity();
+        Entity source = event.getSource().getEntity();
         if (!(source instanceof LivingEntity attacker)) {
             return;
         }
         if (!isHolding(attacker, ModItems.DISCO_SWORD.get())) {
             return;
         }
-        if (attacker instanceof Player p && p.getCooldowns().isOnCooldown(p.getMainHandItem().getItem())) return;
+        if (attacker instanceof Player p && p.getCooldowns().isOnCooldown(ModItems.DISCO_SWORD.get())) return;
         Vec3 pos = victim.position();
         for (int i = 0; i < 5; i++) {
             int rgb = RANDOM.nextInt(0xFFFFFF);
@@ -205,7 +209,7 @@ public final class CombatHandlers {
         level.playSound(null, victim.blockPosition(), notes[RANDOM.nextInt(notes.length)].value(),
                 SoundSource.PLAYERS, 1.0F, 1.0F);
         if (attacker instanceof Player discoPlayer) {
-            discoPlayer.getCooldowns().addCooldown(discoPlayer.getMainHandItem().getItem(), 30);
+            discoPlayer.getCooldowns().addCooldown(ModItems.DISCO_SWORD.get(), 30);
         }
         LOGGER.info("Disco! {} hit {}", attacker.getName().getString(), victim.getName().getString());
     }

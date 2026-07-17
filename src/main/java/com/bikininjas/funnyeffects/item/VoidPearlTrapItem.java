@@ -43,7 +43,23 @@ public final class VoidPearlTrapItem extends Item {
         }
         Vec3 look = player.getLookAngle().scale(20.0D);
         Vec3 dest = player.position().add(look.x, look.y, look.z);
-        targetPlayer.teleportTo((ServerLevel) player.level(), dest.x, dest.y, dest.z,
+        ServerLevel serverLevel = (ServerLevel) player.level();
+
+        // Prevent grief: check dest is not in void or inside a block
+        if (dest.y <= serverLevel.getMinBuildHeight() || dest.y >= serverLevel.getMaxBuildHeight() - 1) {
+            player.displayClientMessage(
+                    net.minecraft.network.chat.Component.literal("§cCannot teleport into the void!"), true);
+            return InteractionResult.FAIL;
+        }
+        var destBlock = serverLevel.getBlockState(
+                net.minecraft.core.BlockPos.containing(dest.x, dest.y, dest.z));
+        if (!destBlock.isAir()) {
+            player.displayClientMessage(
+                    net.minecraft.network.chat.Component.literal("§cTarget location is blocked!"), true);
+            return InteractionResult.FAIL;
+        }
+
+        targetPlayer.teleportTo(serverLevel, dest.x, dest.y, dest.z,
                 targetPlayer.getYRot(), targetPlayer.getXRot());
         targetPlayer.level().playSound(null, targetPlayer.blockPosition(),
                 SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, 1.0F);
