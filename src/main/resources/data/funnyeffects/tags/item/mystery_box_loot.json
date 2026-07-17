@@ -1,0 +1,25 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:diamond",
+    "minecraft:emerald",
+    "minecraft:golden_apple",
+    "minecraft:ender_pearl",
+    "minecraft:netherite_scrap",
+    "minecraft:enchanted_golden_apple",
+    "minecraft:blaze_rod",
+    "minecraft:ghast_tear",
+    "minecraft:nether_star",
+    "minecraft:totem_of_undying",
+    "minecraft:elytra",
+    "minecraft:trident",
+    "minecraft:diamond_horse_armor",
+    "minecraft:music_disc_pigstep",
+    "minecraft:nametag",
+    "minecraft:saddle",
+    "minecraft:experience_bottle",
+    "funnyeffects:slapfish",
+    "funnyeffects:squeaky_toy",
+    "funnyeffects:chicken_wand"
+  ]
+}

@@ -11,6 +11,7 @@ import com.bikininjas.funnyeffects.item.CombatHandlers;
 import com.bikininjas.funnyeffects.item.EntityInteractHandlers;
 import com.bikininjas.funnyeffects.item.GadgetHandlers;
 import com.bikininjas.funnyeffects.item.ModItems;
+import com.bikininjas.funnyeffects.item.PetHandler;
 import com.bikininjas.funnyeffects.item.ToolHandlers;
 import com.bikininjas.funnyeffects.item.TooltipHandler;
 import net.neoforged.bus.api.IEventBus;
@@ -47,6 +48,7 @@ public final class FunnyEffectsMod {
         ArmorHandlers.init();
         GadgetHandlers.init();
         EntityInteractHandlers.init();
+        PetHandler.init();
 
         BikiniConfigRegistry.registerBool("funnyeffects", "enable_combat", "Combat Items", true);
         BikiniConfigRegistry.registerBool("funnyeffects", "enable_gadgets", "Gadget Items", true);
@@ -92,6 +94,8 @@ public final class FunnyEffectsMod {
         ColorAPI.tintItem(modBus, ModItems.INFINITE_PEARL, 0xFF44FF88);
         ColorAPI.tintItem(modBus, ModItems.TREECAPITATOR, 0xFF448844);
         ColorAPI.tintItem(modBus, ModItems.LAVA_WALKER, 0xFFFF8844);
+        ColorAPI.tintItem(modBus, ModItems.MYSTERY_BOX, 0xFFFFAA00);
+        ColorAPI.tintItem(modBus, ModItems.VOID_PEARL_TRAP, 0xFF442244);
 
         LOGGER.info("Funny Effects mod initialized");
     }

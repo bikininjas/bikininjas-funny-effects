@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -84,9 +85,23 @@ public final class MobCatcherItem extends Item {
         }
         entity.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D,
                 player.getYRot(), 0.0F);
-        level.addFreshEntity(entity);
-        stack.remove(DataComponents.CUSTOM_DATA);
-        LOGGER.info("Released entity {} from mob catcher", id);
+        if (entity instanceof Mob mob) {
+            mob.setPersistenceRequired();
+        }
+        if (entity instanceof LivingEntity living) {
+            living.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                    net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE, 6000, 255,
+                    true, false));
+            level.addFreshEntity(living);
+            stack.remove(DataComponents.CUSTOM_DATA);
+            PetHandler.registerPet(player, living);
+        } else {
+            level.addFreshEntity(entity);
+            stack.remove(DataComponents.CUSTOM_DATA);
+            LOGGER.info("Released non-living entity {}", id);
+            return InteractionResult.SUCCESS;
+        }
+        LOGGER.info("Released entity {} from mob catcher as a pet", id);
         return InteractionResult.SUCCESS;
     }
 

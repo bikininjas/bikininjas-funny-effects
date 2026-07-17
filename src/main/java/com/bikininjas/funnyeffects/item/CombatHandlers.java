@@ -51,6 +51,7 @@ public final class CombatHandlers {
 
     /**
      * Lifesteal blade: heal the attacker for 20% of damage dealt when wielding the blade.
+     * Combo bonus with Thorns Shield in offhand: 30% lifesteal.
      */
     @SubscribeEvent
     public static void onLivingDamageLifesteal(@NotNull LivingDamageEvent.Post event) {
@@ -66,7 +67,8 @@ public final class CombatHandlers {
             return;
         }
         float dealt = event.getNewDamage();
-        float heal = dealt * 0.2F;
+        boolean combo = player.getOffhandItem().is(ModItems.THORNS_SHIELD.get());
+        float heal = dealt * (combo ? 0.3F : 0.2F);
         if (heal > 0.0F) {
             player.heal(heal);
         }

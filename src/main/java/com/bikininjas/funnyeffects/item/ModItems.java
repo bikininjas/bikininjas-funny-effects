@@ -180,4 +180,14 @@ public final class ModItems {
     public static final DeferredItem<ArmorItem> LAVA_WALKER = MOD_ITEMS.registerItem("lava_walker",
             props -> new ArmorItem(FunnyArmorMaterials.LAVA_WALKER, ArmorItem.Type.BOOTS,
                     props.stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    // -- New items (Phase 6) ---------------------------------------------------
+
+    /** Craftable item: right-click to get a random item from the mystery_box_loot tag. */
+    public static final DeferredItem<Item> MYSTERY_BOX = MOD_ITEMS.registerItem("mystery_box",
+            props -> new MysteryBoxItem(props.stacksTo(1).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    /** Ender-pearl variant: right-click on a player to teleport them to your cursor. */
+    public static final DeferredItem<Item> VOID_PEARL_TRAP = MOD_ITEMS.registerItem("void_pearl_trap",
+            props -> new VoidPearlTrapItem(props.stacksTo(8).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
 }
