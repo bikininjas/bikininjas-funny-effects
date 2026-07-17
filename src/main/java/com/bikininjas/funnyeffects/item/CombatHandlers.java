@@ -163,6 +163,9 @@ public final class CombatHandlers {
         victim.hurtMarked = true;
         level.playSound(null, victim.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP,
                 SoundSource.PLAYERS, 1.0F, 1.0F);
+        if (attacker instanceof Player slapPlayer) {
+            slapPlayer.getCooldowns().addCooldown(slapPlayer.getMainHandItem().getItem(), 30);
+        }
         LOGGER.info("Slapfish! {} slapped {}", attacker.getName().getString(), victim.getName().getString());
     }
 
@@ -197,6 +200,9 @@ public final class CombatHandlers {
                 SoundEvents.NOTE_BLOCK_HAT, SoundEvents.NOTE_BLOCK_BASEDRUM};
         level.playSound(null, victim.blockPosition(), notes[RANDOM.nextInt(notes.length)].value(),
                 SoundSource.PLAYERS, 1.0F, 1.0F);
+        if (attacker instanceof Player discoPlayer) {
+            discoPlayer.getCooldowns().addCooldown(discoPlayer.getMainHandItem().getItem(), 30);
+        }
         LOGGER.info("Disco! {} hit {}", attacker.getName().getString(), victim.getName().getString());
     }
 

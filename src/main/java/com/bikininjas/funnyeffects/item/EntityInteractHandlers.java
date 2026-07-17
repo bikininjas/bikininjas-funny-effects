@@ -62,6 +62,7 @@ public final class EntityInteractHandlers {
         living.hurtMarked = true;
         level.playSound(null, living.blockPosition(), SoundEvents.CHICKEN_AMBIENT,
                 SoundSource.PLAYERS, 1.0F, 1.0F);
+        player.getCooldowns().addCooldown(stack.getItem(), 30);
         LOGGER.info("Bawk! {} is now a chicken", living.getName().getString());
     }
 
@@ -93,6 +94,7 @@ public final class EntityInteractHandlers {
                     SoundSource.PLAYERS, 1.0F, 1.0F);
         }
         event.setCanceled(true);
+        player.getCooldowns().addCooldown(player.getMainHandItem().getItem(), 30);
         LOGGER.info("Dinnerbone bat toggled name on {}", target.getName().getString());
     }
 

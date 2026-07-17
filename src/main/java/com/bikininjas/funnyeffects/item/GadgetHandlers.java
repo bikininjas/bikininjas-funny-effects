@@ -99,6 +99,7 @@ public final class GadgetHandlers {
                 mob.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 100, 2, false, true));
             }
         }
+        player.getCooldowns().addCooldown(stack.getItem(), 30);
     }
 
     /**
@@ -145,6 +146,7 @@ public final class GadgetHandlers {
                 player.getZ() + look.z * 20.0D);
         level.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT,
                 SoundSource.PLAYERS, 1.0F, 1.0F);
+        player.getCooldowns().addCooldown(stack.getItem(), 30);
         LOGGER.info("Void warp! {}", player.getName().getString());
     }
 
@@ -182,6 +184,7 @@ public final class GadgetHandlers {
                 SoundSource.PLAYERS, 1.0F, 1.0F);
         stack.shrink(1);
         event.setCanceled(true);
+        player.getCooldowns().addCooldown(stack.getItem(), 30);
         LOGGER.info("Party popper fired by {}", player.getName().getString());
     }
 
