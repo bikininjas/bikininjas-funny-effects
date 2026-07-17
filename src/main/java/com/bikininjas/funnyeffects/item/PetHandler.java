@@ -37,7 +37,9 @@ public final class PetHandler {
     }
 
     public static void registerPet(@NotNull Player owner, @NotNull LivingEntity pet) {
-        activePets.put(pet.getUUID(), new PetData(owner.getUUID(), owner.level().getGameTime()));
+        var server = owner.getServer();
+        long now = (server != null) ? server.getTickCount() : 0L;
+        activePets.put(pet.getUUID(), new PetData(owner.getUUID(), now));
         LOGGER.info("Pet registered: {} for player {}", pet.getName().getString(), owner.getName().getString());
     }
 
@@ -64,6 +66,7 @@ public final class PetHandler {
             if (player.tickCount % TELEPORT_INTERVAL_TICKS != 0) {
                 return;
             }
+            long now = player.getServer() != null ? player.getServer().getTickCount() : 0L;
             var iterator = activePets.entrySet().iterator();
             while (iterator.hasNext()) {
                 var entry = iterator.next();
@@ -76,7 +79,7 @@ public final class PetHandler {
                     iterator.remove();
                     continue;
                 }
-                long age = player.level().getGameTime() - data.spawnedAt;
+                long age = now - data.spawnedAt;
                 if (age >= PET_LIFETIME_TICKS) {
                     pet.discard();
                     iterator.remove();
@@ -87,6 +90,30 @@ public final class PetHandler {
                 double offsetZ = player.getRandom().nextDouble() * 3.0D - 1.5D;
                 pet.moveTo(player.getX() + offsetX, player.getY(), player.getZ() + offsetZ,
                         pet.getYRot(), pet.getXRot());
+            }
+        }
+
+        @SubscribeEvent
+        static void onServerTick(@NotNull ServerTickEvent.Post event) {
+            if (event.getServer().getTickCount() % TELEPORT_INTERVAL_TICKS != 0) {
+                return;
+            }
+            long now = event.getServer().getTickCount();
+            var iterator = activePets.entrySet().iterator();
+            while (iterator.hasNext()) {
+                var entry = iterator.next();
+                PetData data = entry.getValue();
+                if (now - data.spawnedAt >= PET_LIFETIME_TICKS) {
+                    for (var level : event.getServer().getAllLevels()) {
+                        Entity pet = level.getEntity(entry.getKey());
+                        if (pet != null) {
+                            pet.discard();
+                            break;
+                        }
+                    }
+                    iterator.remove();
+                    LOGGER.debug("Orphan pet cleaned up (lifetime expired)");
+                }
             }
         }
     }

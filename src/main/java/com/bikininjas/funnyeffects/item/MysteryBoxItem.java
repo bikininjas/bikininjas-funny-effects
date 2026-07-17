@@ -43,7 +43,7 @@ public final class MysteryBoxItem extends Item {
         if (level.isClientSide()) {
             return InteractionResultHolder.success(stack);
         }
-        var items = getLootItems(level);
+        var items = getLootItems();
         if (items.isEmpty()) {
             LOGGER.warn("Mystery box loot tag is empty — no items to give");
             return InteractionResultHolder.pass(stack);
@@ -56,7 +56,7 @@ public final class MysteryBoxItem extends Item {
         return InteractionResultHolder.consume(stack);
     }
 
-    private static List<Item> getLootItems(@NotNull Level level) {
+    private static List<Item> getLootItems() {
         var items = new ArrayList<Item>();
         for (Holder<Item> holder : BuiltInRegistries.ITEM.getTagOrEmpty(LOOT_TAG)) {
             items.add(holder.value());
