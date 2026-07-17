@@ -20,7 +20,7 @@ rootProject.name = 'funny-effects'
 if (file('../core-lib').exists()) {
     includeBuild('../core-lib') {
         dependencySubstitution {
-            substitute module('com.bikininjas.corelib:core_lib') using project(':')
+            substitute module('com.bikininjas:core-lib') using project(':')
         }
     }
 }
