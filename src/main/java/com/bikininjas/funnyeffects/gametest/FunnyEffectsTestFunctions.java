@@ -3,6 +3,7 @@ package com.bikininjas.funnyeffects.gametest;
 import com.bikininjas.funnyeffects.FunnyEffectsMod;
 import com.bikininjas.funnyeffects.item.ModItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -131,14 +132,12 @@ public final class FunnyEffectsTestFunctions {
         var player = makePlayer(helper);
         var pig = helper.spawn(EntityType.PIG, new BlockPos(1, 2, 1));
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.DINNERBONE_BAT.get()));
-        // Toggle the Dinnerbone tag.
-        if (pig.getTags().contains("Dinnerbone")) {
-            pig.removeTag("Dinnerbone");
-        } else {
-            pig.addTag("Dinnerbone");
-        }
-        helper.assertTrue(pig.getTags().contains("Dinnerbone"),
-                "Pig should have the Dinnerbone tag applied");
+        // Set custom name to "Dinnerbone" to trigger the upside-down rendering
+        pig.setCustomName(Component.literal("Dinnerbone"));
+        helper.assertTrue(pig.hasCustomName(),
+                "Pig should have a custom name set");
+        helper.assertTrue("Dinnerbone".equals(pig.getCustomName().getString()),
+                "Pig's custom name should be Dinnerbone");
         helper.succeed();
     }
 

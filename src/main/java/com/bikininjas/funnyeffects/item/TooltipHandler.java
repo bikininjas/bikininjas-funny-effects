@@ -23,7 +23,7 @@ public final class TooltipHandler {
     private static final ModLogger LOGGER = LogManager.getLogger(FunnyEffectsMod.MOD_ID, TooltipHandler.class);
 
     private static final Map<String, String[]> TOOLTIPS = Map.<String, String[]>ofEntries(
-            Map.entry("bouncy_slime", new String[]{"§a◆ Food", "§7Jump Boost IV (30s) + Slow Falling"}),
+            Map.entry("bouncy_slime", new String[]{"§a◆ Food", "§7Jump Boost IV (30s) + Slow Falling (5s)"}),
             Map.entry("flatulent_bean", new String[]{"§a◆ Food", "§7Explosive knockback + Nausea II"}),
             Map.entry("magnetic_glove", new String[]{"§9◆ Gadget", "§7Pulls nearby items toward you"}),
             Map.entry("squeaky_toy", new String[]{"§9◆ Gadget", "§7Slows nearby mobs in 5 block radius", "§7Cooldown: 1.5s"}),
