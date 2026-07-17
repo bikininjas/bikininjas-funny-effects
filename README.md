@@ -48,3 +48,9 @@ The mod registers fun random events via core-lib's RandomEventManager:
 ## Dependencies
 - **core-lib** (required) — shared library
 - Minecraft 1.21.1, NeoForge
+
+## 🎛️ BikiniConfig Options
+Accessible via `/bn` in-game: Combat Items, Gadget Items, Armor Items (toggle each category).
+
+## 🎛️ BikiniConfig Options
+Accessible via `/bn`: Combat, Gadgets, Armor toggles.

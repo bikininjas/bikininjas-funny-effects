@@ -3,6 +3,7 @@ package com.bikininjas.funnyeffects;
 import com.bikininjas.corelib.log.LogManager;
 import com.bikininjas.corelib.log.ModLogger;
 import com.bikininjas.corelib.color.ColorAPI;
+import com.bikininjas.corelib.config.BikiniConfigRegistry;
 import com.bikininjas.corelib.randomevent.RandomEventManager;
 import com.bikininjas.corelib.randomevent.RandomEvents;
 import com.bikininjas.funnyeffects.item.ArmorHandlers;
@@ -46,6 +47,10 @@ public final class FunnyEffectsMod {
         ArmorHandlers.init();
         GadgetHandlers.init();
         EntityInteractHandlers.init();
+
+        BikiniConfigRegistry.registerBool("funnyeffects", "enable_combat", "Combat Items", true);
+        BikiniConfigRegistry.registerBool("funnyeffects", "enable_gadgets", "Gadget Items", true);
+        BikiniConfigRegistry.registerBool("funnyeffects", "enable_armor", "Armor Items", true);
 
         // Configure random events — fires every 5-15 minutes
         var rem = RandomEventManager.getInstance();
