@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Pre-commit hook — compile + test avant chaque commit
-# Pour un build complet: FULL_CHECK=1 git commit ...
+# Pour un check complet avec smoke test serveur: FULL_CHECK=1 git commit ...
+# Pour juste le smoke test: ./scripts/smoke-test
 
 set -euo pipefail
 REPO_ROOT="$(git rev-parse --show-toplevel)"
@@ -13,5 +14,13 @@ fi
 
 echo "🔨 Pre-commit: compileJava + test..."
 ./gradlew compileJava test
+
+if [ "${FULL_CHECK:-0}" = "1" ]; then
+  echo ""
+  echo "🔨 Pre-commit: smoke test (démarrage serveur 30s)..."
+  echo "eula=true" > run/eula.txt
+  timeout 30 ./gradlew runServer --args="nogui" 2>&1 || [ $? -eq 124 ]
+  echo "✅ Smoke test OK"
+fi
 
 echo "✅ Pre-commit OK"
