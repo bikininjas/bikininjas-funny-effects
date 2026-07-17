@@ -9,6 +9,7 @@ import com.bikininjas.funnyeffects.item.EntityInteractHandlers;
 import com.bikininjas.funnyeffects.item.GadgetHandlers;
 import com.bikininjas.funnyeffects.item.ModItems;
 import com.bikininjas.funnyeffects.item.ToolHandlers;
+import com.bikininjas.funnyeffects.item.TooltipHandler;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +44,7 @@ public final class FunnyEffectsMod {
         ArmorHandlers.init();
         GadgetHandlers.init();
         EntityInteractHandlers.init();
+        TooltipHandler.init();
 
         ColorAPI.tintItem(modBus, ModItems.BOUNCY_SLIME, 0xFF88FF88);
         ColorAPI.tintItem(modBus, ModItems.MAGNETIC_GLOVE, 0xFF4444FF);
