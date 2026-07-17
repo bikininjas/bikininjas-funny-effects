@@ -3,12 +3,14 @@ package com.bikininjas.funnyeffects;
 import com.bikininjas.corelib.log.LogManager;
 import com.bikininjas.corelib.log.ModLogger;
 import com.bikininjas.corelib.color.ColorAPI;
-import com.bikininjas.funnyeffects.item.ItemEvents;
+import com.bikininjas.funnyeffects.item.ArmorHandlers;
+import com.bikininjas.funnyeffects.item.CombatHandlers;
+import com.bikininjas.funnyeffects.item.EntityInteractHandlers;
+import com.bikininjas.funnyeffects.item.GadgetHandlers;
 import com.bikininjas.funnyeffects.item.ModItems;
+import com.bikininjas.funnyeffects.item.ToolHandlers;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.common.NeoForge;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -36,7 +38,11 @@ public final class FunnyEffectsMod {
         ModCreativeTab.CREATIVE_TABS.register(modBus);
 
         // Register gameplay event handlers on the NeoForge (game) event bus
-        NeoForge.EVENT_BUS.register(ItemEvents.class);
+        ToolHandlers.init();
+        CombatHandlers.init();
+        ArmorHandlers.init();
+        GadgetHandlers.init();
+        EntityInteractHandlers.init();
 
         ColorAPI.tintItem(modBus, ModItems.BOUNCY_SLIME, 0xFF88FF88);
         ColorAPI.tintItem(modBus, ModItems.MAGNETIC_GLOVE, 0xFF4444FF);

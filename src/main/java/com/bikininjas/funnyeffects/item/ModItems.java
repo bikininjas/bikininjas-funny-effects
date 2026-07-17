@@ -18,7 +18,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * <p>
  * Items are registered via NeoForge's {@link DeferredRegister} system. Gameplay behaviour
  * (effects on eat, tick-based abilities, damage reflection, etc.) is wired through
- * {@link com.bikininjas.funnyeffects.item.ItemEvents} handlers on the NeoForge event bus —
+ * {@code ToolHandlers}, {@code CombatHandlers}, {@code ArmorHandlers}, {@code GadgetHandlers},
+ * and {@code EntityInteractHandlers} on the NeoForge event bus —
  * never via the deprecated {@code @EventBusSubscriber}.
  */
 public final class ModItems {
