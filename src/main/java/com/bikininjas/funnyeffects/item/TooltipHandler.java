@@ -43,7 +43,7 @@ public final class TooltipHandler {
             Map.entry("replanter_hoe", new String[]{"§6◆ Tool", "§7Harvests + replants crops (offhand)"}),
             Map.entry("treecapitator", new String[]{"§6◆ Tool", "§7Breaks entire connected tree at once"}),
             Map.entry("potato_goggles", new String[]{"§5◆ Armor — Helmet", "§7Defense: +2", "§7Reveals nearby hostiles with Glowing"}),
-            Map.entry("rainbow_boots", new String[]{"§5◆ Armor — Boots", "§7Defense: +2", "§7Rainbow particle trail while moving"}),
+            Map.entry("rainbow_boots", new String[]{"§5◆ Armor — Boots", "§7Rainbow particle trail while moving"}),
             Map.entry("bouncy_boots", new String[]{"§5◆ Armor — Boots", "§7Defense: +2", "§7Negates all fall damage + bounce"}),
             Map.entry("sneaky_helmet", new String[]{"§5◆ Armor — Helmet", "§7Defense: +1", "§7Blinds you + reveals mobs around"}),
             Map.entry("lava_walker", new String[]{"§5◆ Armor — Boots", "§7Defense: +2", "§7Turns lava to obsidian while sprinting"}),

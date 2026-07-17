@@ -87,6 +87,7 @@ public final class GadgetHandlers {
         if (!stack.is(ModItems.SQUEAKY_TOY.get())) {
             return;
         }
+        if (player.getCooldowns().isOnCooldown(stack.getItem())) return;
         Level level = player.level();
         if (level.isClientSide()) {
             return;
@@ -136,6 +137,7 @@ public final class GadgetHandlers {
         if (!stack.is(ModItems.VOID_PEARL.get())) {
             return;
         }
+        if (player.getCooldowns().isOnCooldown(stack.getItem())) return;
         Level level = player.level();
         if (level.isClientSide()) {
             return;
@@ -160,6 +162,7 @@ public final class GadgetHandlers {
         if (!stack.is(ModItems.PARTY_POPPER.get())) {
             return;
         }
+        if (player.getCooldowns().isOnCooldown(stack.getItem())) return;
         Level level = player.level();
         if (level.isClientSide()) {
             return;

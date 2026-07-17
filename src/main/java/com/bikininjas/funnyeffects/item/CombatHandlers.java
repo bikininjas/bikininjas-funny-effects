@@ -155,6 +155,7 @@ public final class CombatHandlers {
         if (!isHolding(attacker, ModItems.SLAPFISH.get())) {
             return;
         }
+        if (attacker instanceof Player p && p.getCooldowns().isOnCooldown(p.getMainHandItem().getItem())) return;
         // Cancel the default damage entirely.
         event.getContainer().setNewDamage(0.0F);
         // Knock the victim away along the attacker's look vector.
@@ -186,6 +187,7 @@ public final class CombatHandlers {
         if (!isHolding(attacker, ModItems.DISCO_SWORD.get())) {
             return;
         }
+        if (attacker instanceof Player p && p.getCooldowns().isOnCooldown(p.getMainHandItem().getItem())) return;
         Vec3 pos = victim.position();
         for (int i = 0; i < 5; i++) {
             int rgb = RANDOM.nextInt(0xFFFFFF);

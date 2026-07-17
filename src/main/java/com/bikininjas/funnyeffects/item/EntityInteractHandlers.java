@@ -50,6 +50,7 @@ public final class EntityInteractHandlers {
         if (!stack.is(ModItems.CHICKEN_WAND.get())) {
             return;
         }
+        if (player.getCooldowns().isOnCooldown(stack.getItem())) return;
         Level level = player.level();
         if (level.isClientSide()) {
             return;
@@ -80,6 +81,7 @@ public final class EntityInteractHandlers {
         if (!isHolding(player, ModItems.DINNERBONE_BAT.get())) {
             return;
         }
+        if (player.getCooldowns().isOnCooldown(player.getMainHandItem().getItem())) return;
         Entity target = event.getTarget();
         if (target == null) {
             return;
