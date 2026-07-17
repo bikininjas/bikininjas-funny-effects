@@ -96,6 +96,13 @@ public final class FunnyEffectsMod {
         ColorAPI.tintItem(modBus, ModItems.LAVA_WALKER, 0xFFFF8844);
         ColorAPI.tintItem(modBus, ModItems.MYSTERY_BOX, 0xFFFFAA00);
         ColorAPI.tintItem(modBus, ModItems.VOID_PEARL_TRAP, 0xFF442244);
+        ColorAPI.tintItem(modBus, ModItems.INFINITE_WATER_BUCKET, 0xFF3344FF);
+        ColorAPI.tintItem(modBus, ModItems.INFINITE_LAVA_BUCKET, 0xFFFF4422);
+        ColorAPI.tintItem(modBus, ModItems.EXPLOSIVE_ARROW, 0xFFFF4444);
+        ColorAPI.tintItem(modBus, ModItems.TELEPORT_ARROW, 0xFF44FF44);
+        ColorAPI.tintItem(modBus, ModItems.CHICKEN_ARROW, 0xFFFFFFFF);
+        ColorAPI.tintItem(modBus, ModItems.CONFUSION_ARROW, 0xFF4444FF);
+        ColorAPI.tintItem(modBus, ModItems.LIGHTNING_ARROW, 0xFFFFDD44);
 
         LOGGER.info("Funny Effects mod initialized");
     }

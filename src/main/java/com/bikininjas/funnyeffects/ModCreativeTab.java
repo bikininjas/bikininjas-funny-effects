@@ -58,6 +58,13 @@ public final class ModCreativeTab {
                     output.accept(ModItems.LAVA_WALKER.get());
                     output.accept(ModItems.MYSTERY_BOX.get());
                     output.accept(ModItems.VOID_PEARL_TRAP.get());
+                    output.accept(ModItems.INFINITE_WATER_BUCKET.get());
+                    output.accept(ModItems.INFINITE_LAVA_BUCKET.get());
+                    output.accept(ModItems.EXPLOSIVE_ARROW.get());
+                    output.accept(ModItems.TELEPORT_ARROW.get());
+                    output.accept(ModItems.CHICKEN_ARROW.get());
+                    output.accept(ModItems.CONFUSION_ARROW.get());
+                    output.accept(ModItems.LIGHTNING_ARROW.get());
                 });
         return builder.build();
     }

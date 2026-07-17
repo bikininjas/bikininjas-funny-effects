@@ -51,7 +51,14 @@ public final class TooltipHandler {
             Map.entry("dinnerbone_bat", new String[]{"§d◆ Interaction", "§7Flips entity upside-down (Dinnerbone)", "§7Cooldown: 1.5s"}),
             Map.entry("mob_catcher", new String[]{"§d◆ Interaction", "§7Captures + releases any living mob"}),
             Map.entry("mystery_box", new String[]{"§9◆ Gadget", "§7Gives random loot on right-click"}),
-            Map.entry("void_pearl_trap", new String[]{"§9◆ Gadget", "§7Teleport another player 20 blocks away"})
+            Map.entry("void_pearl_trap", new String[]{"§9◆ Gadget", "§7Teleport another player 20 blocks away"}),
+            Map.entry("infinite_water_bucket", new String[]{"§9◆ Gadget", "§7Places water without consuming", "§7Cooldown: 0.25s"}),
+            Map.entry("infinite_lava_bucket", new String[]{"§9◆ Gadget", "§7Places lava without consuming", "§7Cooldown: 5s"}),
+            Map.entry("explosive_arrow", new String[]{"§c◆ Combat — Arrow", "§7Small explosion on hit"}),
+            Map.entry("teleport_arrow", new String[]{"§c◆ Combat — Arrow", "§7Swaps position with target"}),
+            Map.entry("chicken_arrow", new String[]{"§c◆ Combat — Arrow", "§7Spawns 3 chickens on hit"}),
+            Map.entry("confusion_arrow", new String[]{"§c◆ Combat — Arrow", "§7Nausea III + Slowness III on hit"}),
+            Map.entry("lightning_arrow", new String[]{"§c◆ Combat — Arrow", "§7Lightning bolt on hit"})
     );
 
     static {

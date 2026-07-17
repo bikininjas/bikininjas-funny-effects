@@ -190,4 +190,48 @@ public final class ModItems {
     /** Ender-pearl variant: right-click on a player to teleport them to your cursor. */
     public static final DeferredItem<Item> VOID_PEARL_TRAP = MOD_ITEMS.registerItem("void_pearl_trap",
             props -> new VoidPearlTrapItem(props.stacksTo(8).component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+    // -- New items (Phase 7) ---------------------------------------------------
+
+    /** Infinite water bucket: places water without consuming the item. 5-tick cooldown. */
+    public static final DeferredItem<Item> INFINITE_WATER_BUCKET = MOD_ITEMS.registerItem("infinite_water_bucket",
+            props -> new InfiniteBucketItem(props.stacksTo(1).fireResistant()
+                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true),
+                    InfiniteBucketItem.FluidType.WATER));
+
+    /** Infinite lava bucket: places lava without consuming the item. 100-tick cooldown. */
+    public static final DeferredItem<Item> INFINITE_LAVA_BUCKET = MOD_ITEMS.registerItem("infinite_lava_bucket",
+            props -> new InfiniteBucketItem(props.stacksTo(1).fireResistant()
+                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true),
+                    InfiniteBucketItem.FluidType.LAVA));
+
+    /** Explosive arrow: creates a small explosion on hit. */
+    public static final DeferredItem<Item> EXPLOSIVE_ARROW = MOD_ITEMS.registerItem("explosive_arrow",
+            props -> new FunnyArrowItem(props.stacksTo(64)
+                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true),
+                    FunnyArrowEntity.ArrowEffect.EXPLOSIVE));
+
+    /** Teleport arrow: swaps position with the hit entity. */
+    public static final DeferredItem<Item> TELEPORT_ARROW = MOD_ITEMS.registerItem("teleport_arrow",
+            props -> new FunnyArrowItem(props.stacksTo(64)
+                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true),
+                    FunnyArrowEntity.ArrowEffect.TELEPORT));
+
+    /** Chicken arrow: spawns 3 chickens on hit. */
+    public static final DeferredItem<Item> CHICKEN_ARROW = MOD_ITEMS.registerItem("chicken_arrow",
+            props -> new FunnyArrowItem(props.stacksTo(64)
+                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true),
+                    FunnyArrowEntity.ArrowEffect.CHICKEN));
+
+    /** Confusion arrow: applies Nausea III + Slowness III on hit. */
+    public static final DeferredItem<Item> CONFUSION_ARROW = MOD_ITEMS.registerItem("confusion_arrow",
+            props -> new FunnyArrowItem(props.stacksTo(64)
+                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true),
+                    FunnyArrowEntity.ArrowEffect.CONFUSION));
+
+    /** Lightning arrow: summons a lightning bolt on hit. */
+    public static final DeferredItem<Item> LIGHTNING_ARROW = MOD_ITEMS.registerItem("lightning_arrow",
+            props -> new FunnyArrowItem(props.stacksTo(64)
+                    .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true),
+                    FunnyArrowEntity.ArrowEffect.LIGHTNING));
 }
