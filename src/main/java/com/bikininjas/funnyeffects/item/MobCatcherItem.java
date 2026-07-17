@@ -70,7 +70,17 @@ public final class MobCatcherItem extends Item {
         if (data == null || !data.contains(CAPTURED_KEY)) {
             return InteractionResult.PASS;
         }
-        ResourceLocation id = ResourceLocation.parse(data.copyTag().getString(CAPTURED_KEY));
+        ResourceLocation id;
+        try {
+            id = ResourceLocation.parse(data.copyTag().getString(CAPTURED_KEY));
+        } catch (Exception e) {
+            LOGGER.error("Failed to parse captured entity ID from mob catcher")
+                    .ctx("raw", data.copyTag().getString(CAPTURED_KEY))
+                    .cause(e)
+                    .report();
+            stack.remove(DataComponents.CUSTOM_DATA);
+            return InteractionResult.FAIL;
+        }
         var entityType = BuiltInRegistries.ENTITY_TYPE.get(id);
         if (entityType == null) {
             LOGGER.error("Unknown captured entity type").ctx("id", id.toString()).report();

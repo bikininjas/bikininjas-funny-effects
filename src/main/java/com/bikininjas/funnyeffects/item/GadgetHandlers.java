@@ -199,8 +199,8 @@ public final class GadgetHandlers {
                 SoundSource.PLAYERS, 1.0F, 1.0F);
         level.playSound(null, player.blockPosition(), SoundEvents.PLAYER_LEVELUP,
                 SoundSource.PLAYERS, 1.0F, 1.0F);
-        stack.shrink(1);
         event.setCanceled(true);
+        stack.shrink(1);
         player.getCooldowns().addCooldown(stack.getItem(), 30);
         LOGGER.info("Party popper fired by {}", player.getName().getString());
     }

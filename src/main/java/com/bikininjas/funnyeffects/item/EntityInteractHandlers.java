@@ -81,7 +81,7 @@ public final class EntityInteractHandlers {
         if (!isHolding(player, ModItems.DINNERBONE_BAT.get())) {
             return;
         }
-        if (player.getCooldowns().isOnCooldown(player.getMainHandItem().getItem())) return;
+        if (player.getCooldowns().isOnCooldown(ModItems.DINNERBONE_BAT.get())) return;
         Entity target = event.getTarget();
         if (target == null) {
             return;

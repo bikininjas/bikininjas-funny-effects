@@ -3,6 +3,7 @@ package com.bikininjas.funnyeffects.item;
 import com.bikininjas.corelib.log.LogManager;
 import com.bikininjas.corelib.log.ModLogger;
 import com.bikininjas.funnyeffects.FunnyEffectsMod;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -55,6 +56,16 @@ public final class PetHandler {
         return result;
     }
 
+    @org.jetbrains.annotations.Nullable
+    private static Entity findPet(@org.jetbrains.annotations.Nullable MinecraftServer server, UUID petId) {
+        if (server == null) return null;
+        for (var dim : server.getAllLevels()) {
+            Entity pet = dim.getEntity(petId);
+            if (pet != null) return pet;
+        }
+        return null;
+    }
+
     public record PetData(UUID ownerId, long spawnedAt) {}
 
     private static final class EventHandler {
@@ -97,7 +108,7 @@ public final class PetHandler {
                 if (!data.ownerId.equals(player.getUUID())) {
                     continue;
                 }
-                Entity pet = ((ServerLevel) player.level()).getEntity(entry.getKey());
+                Entity pet = findPet(player.getServer(), entry.getKey());
                 if (pet == null || !pet.isAlive()) {
                     iterator.remove();
                     continue;

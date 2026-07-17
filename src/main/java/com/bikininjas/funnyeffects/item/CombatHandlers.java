@@ -67,7 +67,7 @@ public final class CombatHandlers {
             return;
         }
         float dealt = event.getNewDamage();
-        boolean combo = player.getOffhandItem().is(ModItems.THORNS_SHIELD.get());
+        boolean combo = player.getItemBySlot(EquipmentSlot.CHEST).is(ModItems.THORNS_SHIELD.get());
         float heal = dealt * (combo ? 0.3F : 0.2F);
         if (heal > 0.0F) {
             player.heal(heal);

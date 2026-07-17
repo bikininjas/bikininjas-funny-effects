@@ -72,6 +72,9 @@ public final class ToolHandlers {
         }
         BlockPos pos = event.getPos();
         BlockState state = event.getState();
+        // Destroy block WITHOUT spawning vanilla drops (we spawn smelted versions)
+        level.removeBlock(pos, false);
+        event.setCanceled(true);
         // Compute the block's normal drops, smelt each one, and spawn the result.
         List<ItemStack> drops = Block.getDrops(state, serverLevel, pos, level.getBlockEntity(pos));
         var recipeManager = serverLevel.getRecipeManager();
@@ -162,6 +165,9 @@ public final class ToolHandlers {
         }
         BlockPos pos = event.getPos();
         BlockState state = event.getState();
+        // Destroy block WITHOUT spawning vanilla drops (we teleport drops to player)
+        level.removeBlock(pos, false);
+        event.setCanceled(true);
         // Cancel vanilla drops to avoid duplicates at the block position.
         List<ItemStack> drops = Block.getDrops(state, serverLevel, pos,
                 level.getBlockEntity(pos), player, player.getMainHandItem());
